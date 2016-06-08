@@ -204,9 +204,9 @@
 				APP.refreshWeather();
 				APP.refreshTime();
 
-				setInterval(APP.rotateBgImage, 10000);
-				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 5000);
-				setInterval(APP.refreshTime, 500);
+				setInterval(APP.rotateBgImage, 60000);
+				setTimeout(function() {setInterval(APP.refreshWeather, 30000)}, 10000);
+				setInterval(APP.refreshTime, 1000);
 			};
 
 			APP.rotateBgImage = function() {
