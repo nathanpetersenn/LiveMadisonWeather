@@ -3,13 +3,15 @@
 
 	<head>
 		<title>Madison Live Weather</title>
-		
+
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-		
+
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 
 		<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+
+		<script src="https://use.fontawesome.com/b7732d4d89.js"></script>
 
 		<link href="css/weather-icons.min.css" rel="stylesheet" type="text/css" />
 		<link href="css/weather-icons-wind.min.css" rel="stylesheet" type="text/css" />
@@ -27,7 +29,7 @@
 			main {
 				width: 100%;
 				background-color: rgba(0, 0, 0, .25);
-				padding: 2.5em;
+				padding: 0 0 1em 0;
 				position: fixed;
 				top: 0%;
 				left: 50%;
@@ -71,6 +73,26 @@
 				text-align: center;
 			}
 
+			footer {
+				position: fixed;
+				top: 0;
+				left: 0;
+				transform: translate(0, 0);
+				background-color: rgba(0, 0, 0, .25);
+			}
+
+			footer a {
+				color: #fff;
+				text-decoration: none;
+				text-shadow: 0, 0, 1em rgba(0, 0, 0, .5);
+				display: block;
+				padding: .5em;
+				border-top: 1px solid rgba(255, 255, 255, .2);
+			}
+
+			footer a:first-child {
+				border-top: 0;
+			}
 
 			@media screen and (max-width:1200px) {
 				h1 {
@@ -143,6 +165,10 @@
 			</div>
 		</main>
 
+		<footer>
+			<a href="#" class="widget"><i class="fa fa-external-link"></i></a>
+			<a href="http://nathanpetersen.com/projects/live-madison-weather/" target="_blank"><i class="fa fa-book"></i></a>
+		</footer>
 
 
 		<script>
@@ -159,6 +185,11 @@
 
 
 			APP.init = function() {
+				// hide the toolbar in widget view
+				if (window.location.hash === "#widget") {
+					$("footer").hide();
+				}
+
 				APP.rotateBgImage();
 				APP.refreshWeather();
 				APP.refreshTime();
@@ -170,7 +201,7 @@
 
 			APP.rotateBgImage = function() {
 				var image = new Image();
-				image.src = APP.imageURLs[APP.currImageIndex];
+				image.src = APP.imageURLs[APP.currImageIndex] + "?" + escape(new Date()); // force no caching from browser
 				image.onload = function() {
 					$("html").css("background-image", "url(" + this.src + ")");
 				};
@@ -229,6 +260,16 @@
 			};
 
 			$(document).ready(APP.init);
+
+			$("a.widget").click(function(e) {
+				e.preventDefault();
+
+				window.open(
+					"http://nathanpetersenn.github.io/LiveMadisonWeather/#widget",
+					"Live Madison Weather",
+					"height=492,width=375,menubar=no,status=no,toolbar=no"
+				);
+			});
 		</script>
 	</body>
 </html>
