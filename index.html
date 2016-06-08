@@ -1,1 +1,230 @@
-Hello World
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Madison Live Weather</title>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+		<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+
+		<link href="css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+		<link href="css/weather-icons-wind.min.css" rel="stylesheet" type="text/css" />
+
+		<style>
+			html {
+				font-family: "Open Sans", sans-serif;
+
+				background: no-repeat center center fixed;
+				background-size: cover;
+
+				transition: background 1s linear;
+			}
+
+			main {
+				width: 100%;
+				background-color: rgba(0, 0, 0, .25);
+				padding: 2.5em;
+				position: fixed;
+				top: 0%;
+				left: 50%;
+				transform: translate(-50%, -0%);
+				color: #fff;
+				text-shadow: 0 0 1em rgba(0, 0, 0, .25);
+			}
+
+			h1 {
+				font-size: 7em;
+			}
+
+			h2 {
+				font-size: 3em;
+			}
+
+			h1, h2 {
+				text-align: center;
+				font-weight: 400;
+				margin: 0;
+				padding: 0;
+			}
+
+			div.weather {
+				font-size: 5em;
+				font-weight: 400;
+			}
+
+			div.weather div.row {
+				display: flex;
+				width: 90%;
+				justify-content: space-around;
+				margin: 0 auto;
+			}
+
+			div.weather div.row div span.desc {
+				font-size: 16px;
+				padding: 0;
+				margin: -10px 0 0 0;
+				display: block;
+				text-align: center;
+			}
+
+
+			@media screen and (max-width:1200px) {
+				h1 {
+					font-size: 3.5em;
+				}
+
+				h2 {
+					1.5em;
+				}
+
+				div.weather {
+					font-size: 2.5em;
+				}
+			}
+
+
+			@media screen and (max-width:600px) {
+				div.weather div.row {
+					flex-direction: column;
+				}
+
+				div.weather div.row div {
+					text-align: center;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<main>
+			<h2>Madison, WI</h2>
+
+			<h1><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h1>
+
+
+			<div class="weather">
+				<div class="row">
+					<div>
+						<i class="wi wi-thermometer"></i>
+						<span class="air_temp">0</span>&deg;F
+						<span class="desc">Temperature</span>
+					</div>
+
+					<div>
+						<i class="wi wi-thermometer-exterior"></i>
+						<span class="dewpoint">0</span>&deg;F
+						<span class="desc">Dewpoint</span>
+					</div>
+
+					<div>
+						<i class="wi wi-humidity"></i>
+						<span class="relative_humidity">0</span>%
+						<span class="desc">Humidity</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div>
+						<i class="wi wi-strong-wind"></i>
+						<span class="wind_speed">0</span> mph
+						<span class="desc">Wind Speed</span>
+					</div>
+
+					<div>
+						<i class="wi wi-wind from-0-deg wind_direction"></i>
+						<span class="wind_direction">N</span>
+						<span class="desc">Wind Direction</span>
+					</div>
+				</div>
+			</div>
+		</main>
+
+
+
+		<script>
+			var APP = {};
+
+			APP.imageURLs = [
+				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/north/latest_orig.jpg",
+				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/northwest/latest_orig.jpg",
+				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/east/latest_orig.jpg",
+				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/south/latest_orig.jpg",
+				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/west/latest_orig.jpg"
+			];
+			APP.currImageIndex = 0;
+
+
+			APP.init = function() {
+				APP.rotateBgImage();
+				APP.refreshWeather();
+				APP.refreshTime();
+
+				setInterval(APP.rotateBgImage, 10000);
+				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 5000);
+				setInterval(APP.refreshTime, 500);
+			};
+
+			APP.rotateBgImage = function() {
+				var image = new Image();
+				image.src = APP.imageURLs[APP.currImageIndex];
+				image.onload = function() {
+					$("html").css("background-image", "url(" + this.src + ")");
+				};
+
+				APP.currImageIndex = (APP.currImageIndex + 1) % APP.imageURLs.length;	
+			};
+
+
+			APP.refreshWeather = function() {
+				$.getJSON("http://metobs.ssec.wisc.edu/app/rig/tower/data/jsonp?symbols=t:rh:dir:spd:td&callback=?", function(json) {
+					var w = {};
+					w.timestamp = json.stamps[0];
+
+					w.air_temp = json.data[0][0] * (9/5) + 32;
+					w.relative_humidity = json.data[0][1];
+					w.wind_direction = json.data[0][2];
+					w.wind_speed = json.data[0][3] / 0.44704; // m/s to mph
+					w.dewpoint = json.data[0][4] * (9/5) + 32;
+
+					$("span.air_temp").text(w.air_temp.toFixed(1));
+					$("span.relative_humidity").text(w.relative_humidity.toFixed(0));
+					$("span.wind_direction").text(APP.degreesToCompass(w.wind_direction));
+					$("span.wind_speed").text(w.wind_speed.toFixed(1));
+					$("span.dewpoint").text(w.dewpoint.toFixed(1));
+
+					var i = $("i.wind_direction");
+					i.removeClass();
+					i.addClass("wind_direction");
+					i.addClass("wi");
+					i.addClass("wi-wind");
+					i.addClass("from-" + w.wind_direction + "-deg");
+				});
+			};
+
+			APP.refreshTime = function() {
+				var d = new Date();
+
+				var h = d.getHours() % 12;
+				if (h === 0) h = 12;
+				if (h < 10) h = "0" + h;
+				$("span.hours").text(h);
+
+				var m = d.getMinutes();
+				if (m < 10) m = "0" + m;
+				$("span.minutes").text(m);
+
+				var s = d.getSeconds();
+				if (s < 10) s = "0" + s;
+				$("span.seconds").text(s);
+			};
+
+			APP.degreesToCompass = function(degrees) {
+				var val = parseInt(((degrees/22.5)+.5));
+				var compass = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+				return compass[(val % 16)];
+			};
+
+			$(document).ready(APP.init);
+		</script>
+	</body>
+</html>
