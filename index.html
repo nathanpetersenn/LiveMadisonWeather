@@ -229,6 +229,10 @@
 					w.wind_direction = json.data[0][2];
 					w.wind_speed = json.data[0][3] / 0.44704; // m/s to mph
 					w.dewpoint = json.data[0][4] * (9/5) + 32;
+					
+					if (Number(w.dewpoint) > Number(w.air_temp)) {
+						w.dewpoint = w.air_temp;
+					}
 
 					$("span.air_temp").text(w.air_temp.toFixed(1));
 					$("span.relative_humidity").text(w.relative_humidity.toFixed(0));
