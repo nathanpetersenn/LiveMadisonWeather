@@ -27,7 +27,12 @@
 		<link href="css/weather-icons-wind.min.css" rel="stylesheet" type="text/css" />
 
 		<style>
+			*, *:before, *:after {
+				box-sizing: inherit;
+			}
+		
 			html {
+				box-sizing: border-box;
 				font-family: "Open Sans", sans-serif;
 
 				background: no-repeat center center fixed;
@@ -208,7 +213,7 @@
 				setInterval(APP.refreshTime, 1000);
 				
 				// refresh page every 1 minute for testing
-				setInterval(function() { window.location.reload(); }, 60000); 
+				// setInterval(function() { window.location.reload(); }, 60000); 
 			};
 
 			APP.rotateBgImage = function() {
