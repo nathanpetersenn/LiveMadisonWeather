@@ -206,6 +206,9 @@
 				setInterval(APP.rotateBgImage, 60000);
 				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 2500);
 				setInterval(APP.refreshTime, 1000);
+				
+				// refresh page every 1 minute for testing
+				setInterval(function() { window.location.reload(); }, 60000); 
 			};
 
 			APP.rotateBgImage = function() {
