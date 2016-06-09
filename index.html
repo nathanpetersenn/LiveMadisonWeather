@@ -1,55 +1,40 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<title>Live Madison Weather</title>
 
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
+		<!-- JavaScript -->
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-
-		<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
-
+		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
 		<script src="https://use.fontawesome.com/b7732d4d89.js"></script>
-		
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-79002319-1', 'auto');
-			ga('send', 'pageview');
-		</script>
-
+		<!-- CSS & Fonts -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
+		<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
 		<link href="css/weather-icons.min.css" rel="stylesheet" type="text/css" />
 		<link href="css/weather-icons-wind.min.css" rel="stylesheet" type="text/css" />
 
 		<style>
-			*, *:before, *:after {
-				box-sizing: inherit;
-			}
-		
-			html {
-				box-sizing: border-box;
+			html, body {
 				font-family: "Open Sans", sans-serif;
+				background-color: transparent;
+			}
 
+			html {
 				background: no-repeat center center fixed;
 				background-size: cover;
 
-				transition: background 1s linear;
+				transition: background 1.5s linear;
+				text-shadow: 0 0 1em rgba(0, 0, 0, .3);
 			}
 
 			main {
-				width: 100%;
-				background-color: rgba(0, 0, 0, .25);
-				padding: 0 0 1em 0;
-				position: fixed;
-				top: 0;
-				left: 0;
 				color: #fff;
-				text-shadow: 0 0 1em rgba(0, 0, 0, .25);
+				padding-bottom: 3em;
+				background: linear-gradient(rgba(0, 0, 0, .5), transparent);
 			}
 
 			h1 {
@@ -58,131 +43,245 @@
 
 			h2 {
 				font-size: 3em;
+				margin: 0 0 -.5em 0;
 			}
 
-			h1, h2 {
-				text-align: center;
-				font-weight: 400;
-				margin: 0;
-				padding: 0;
+			h3 {
+				font-size: 6em;
 			}
 
-			div.weather {
-				font-size: 5em;
-				font-weight: 400;
+			h3 small {
+				color: inherit;
+				font-size: 50%;
+				margin-left: -.4em;
 			}
 
-			div.weather div.row {
-				display: flex;
-				width: 90%;
-				justify-content: space-around;
-				margin: 0 auto;
-			}
-
-			div.weather div.row div span.desc {
-				font-size: 16px;
-				padding: 0;
-				margin: -10px 0 0 0;
-				display: block;
-				text-align: center;
+			h4 {
+				font-size: 2em;
+				margin-top: -1em;
 			}
 
 			footer {
 				position: fixed;
-				top: 0;
-				left: 0;
-				transform: translate(0, 0);
-				background-color: rgba(0, 0, 0, .25);
+				bottom: 0;
+				width: 100%;
+				color: #fff;
+				padding-top: 3em;
+				background: linear-gradient(transparent, rgba(0, 0, 0, .5));
 			}
 
-			footer a {
+			aside {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+			}
+
+			aside a {
 				color: #fff;
 				text-decoration: none;
-				text-shadow: 0, 0, 1em rgba(0, 0, 0, .5);
-				display: block;
-				padding: .5em;
-				border-top: 1px solid rgba(255, 255, 255, .2);
-			}
-
-			footer a:first-child {
-				border-top: 0;
-			}
-
-			@media screen and (max-width:1200px) {
-				h1 {
-					font-size: 3.5em;
-				}
-
-				h2 {
-					1.5em;
-				}
-
-				div.weather {
-					font-size: 2.5em;
-				}
+				font-size: 1.5em;
+				margin-left: .5em;
 			}
 
 
-			@media screen and (max-width:600px) {
-				div.weather div.row {
-					flex-direction: column;
+			@media screen and (max-width:2400px) {
+				h3 { font-size: 5em; }
+			}
+
+			@media screen and (max-width:2050px) {
+				h1 { font-size: 5em; }
+				h2 { font-size: 2em; }
+				h3 { font-size: 4em; }
+				h4 { font-size: 1.5em; }
+			}
+
+			@media screen and (max-width:1750px) {
+				h3 { font-size: 3em; }
+				h4 { font-size: 1em; }
+			}
+
+			@media screen and (max-width:1400px) {
+				h1 { font-size: 4em; }
+				h2 { font-size: 1.5em; }
+				h3 { font-size: 2.5em; }
+			}
+
+			@media screen and (max-width:1250px) {
+				h3 { font-size: 2em; }
+				h4 { font-size: .75em; }
+			}
+
+			/*** MEDIUM ***/
+
+			@media screen and (max-width:1025px) {
+				h3 { font-size: 4em; }
+				h4 { font-size: 1.5em; }
+			}
+
+			@media screen and (max-width:900px) {
+				h3 { font-size: 3em; }
+				h4 { font-size: 1em; }
+			}
+
+			@media screen and (max-width:700px) {
+				h3 { font-size: 2.5em; }
+			}
+
+			/*** SMALL ***/
+
+			@media screen and (max-width:640px) {
+				h3 { font-size: 3em; }
+				h4 { font-size: 1em; }
+			}
+
+			/*** SMALL HEIGHT ***/
+			@media screen and (max-width:640px) and (max-height:660px) {
+				footer { display: none; }
+				main {
+					padding-bottom: 0;
+					background: transparent;
 				}
 
-				div.weather div.row div {
-					text-align: center;
-				}
+				body { background: rgba(0, 0, 0, .25); }
+			}
+
+			@media screen and (max-width:640px) and (max-height:550px) {
+				h3 { font-size: 2.5em; }
+				h4 { font-size: .75em; }
 			}
 		</style>
+		
+		<script>
+			// GOOGLE ANALYTICS
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-79002319-1', 'auto');
+			ga('send', 'pageview');
+		</script>
 	</head>
 
 	<body>
-		<main>
-			<h2>Madison, WI</h2>
+		<main class="text-center">
+			<div class="row expanded">
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="air_temp">0</span>
+								<small>&deg;F</small>
+							</h3>
+						</div>
 
-			<h1><span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span></h1>
-
-
-			<div class="weather">
-				<div class="row">
-					<div>
-						<i class="wi wi-thermometer"></i>
-						<span class="air_temp">0</span>&deg;F
-						<span class="desc">Temperature</span>
-					</div>
-
-					<div>
-						<i class="wi wi-thermometer-exterior"></i>
-						<span class="dewpoint">0</span>&deg;F
-						<span class="desc">Dewpoint</span>
-					</div>
-
-					<div>
-						<i class="wi wi-humidity"></i>
-						<span class="relative_humidity">0</span>%
-						<span class="desc">Humidity</span>
+						<div class="small-12 columns">
+							<h4><i class="wi wi-thermometer"></i> <span class="desc">Temperature</span></h4>
+						</div>
 					</div>
 				</div>
 
-				<div class="row">
-					<div>
-						<i class="wi wi-strong-wind"></i>
-						<span class="wind_speed">0</span> mph
-						<span class="desc">Wind Speed</span>
-					</div>
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="dewpoint">0</span>
+								<small>&deg;F</small>
+							</h3>
+						</div>
 
-					<div>
-						<i class="wi wi-wind from-0-deg wind_direction"></i>
-						<span class="wind_direction">N</span>
-						<span class="desc">Wind Direction</span>
+						<div class="small-12 columns">
+							<h4><i class="wi wi-thermometer-exterior"></i> <span class="desc">Dewpoint</span></h4>
+						</div>
+					</div>
+				</div>
+
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="relative_humidity">0</span>
+								<small>%</small>
+							</h3>
+						</div>
+
+						<div class="small-12 columns">
+							<h4><i class="wi wi-humidity"></i> <span class="desc">Humidity</span></h4>
+						</div>
+					</div>
+				</div>
+
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="wind_speed">0</span>
+								<small> mph</small>
+							</h3>
+						</div>
+
+						<div class="small-12 columns">
+							<h4><i class="wi wi-strong-wind"></i> <span class="desc">Wind Speed</span></h4>
+						</div>
+					</div>
+				</div>
+
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="wind_direction">N</span>
+							</h3>
+						</div>
+
+						<div class="small-12 columns">
+							<h4><i class="wi wi-wind from-0-deg wind_direction"></i> <span class="desc">Wind Direction</span></h4>
+						</div>
+					</div>
+				</div>
+
+				<div class="large-2 medium-4 small-12 columns">
+					<div class="row">
+						<div class="small-12 columns">
+							<h3>
+								<span class="pressure">0</span>
+								<small> hPa</small>
+							</h3>
+						</div>
+
+						<div class="small-12 columns">
+							<h4><i class="wi wi-barometer"></i> <span class="desc">Pressure</span></h4>
+						</div>
 					</div>
 				</div>
 			</div>
 		</main>
 
-		<footer>
-			<a href="#" class="widget"><i class="fa fa-external-link"></i></a>
-			<a href="http://nathanpetersen.com/projects/live-madison-weather/" target="_blank"><i class="fa fa-book"></i></a>
+		<footer class="text-center">
+			<div class="row expanded">
+				<div class="small-12 columns">
+					<h2>Madison, WI</h2>
+				</div>
+			</div>
+
+			<div class="row expanded">
+				<div class="small-12 columns">
+					<h1>
+						<span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
+					</h1>
+				</div>
+			</div>
 		</footer>
+
+		<aside>
+			<a href="#" class="widget">
+				<i class="fa fa-external-link"></i>
+			</a>
+
+			<a href="http://nathanpetersen.com/projects/live-madison-weather/" target="_blank">
+				<i class="fa fa-book"></i>
+			</a>
+		</aside>
 
 
 		<script>
@@ -196,12 +295,11 @@
 				"http://metobs.ssec.wisc.edu/pub/cache/aoss/cameras/west/latest_orig.jpg"
 			];
 			APP.currImageIndex = 0;
-
-
+			
 			APP.init = function() {
 				// hide the toolbar in widget view
 				if (window.location.hash === "#widget") {
-					$("footer").hide();
+					$("aside").hide();
 				}
 
 				APP.rotateBgImage();
@@ -226,9 +324,8 @@
 				APP.currImageIndex = (APP.currImageIndex + 1) % APP.imageURLs.length;	
 			};
 
-
 			APP.refreshWeather = function() {
-				$.getJSON("http://metobs.ssec.wisc.edu/app/rig/tower/data/jsonp?symbols=t:rh:dir:spd:td&callback=?", function(json) {
+				$.getJSON("http://metobs.ssec.wisc.edu/app/rig/tower/data/jsonp?symbols=t:rh:dir:spd:td:p&callback=?", function(json) {
 					var w = {};
 					w.timestamp = json.stamps[0];
 
@@ -237,6 +334,7 @@
 					w.wind_direction = json.data[0][2];
 					w.wind_speed = json.data[0][3] / 0.44704; // m/s to mph
 					w.dewpoint = json.data[0][4] * (9/5) + 32;
+					w.pressure = json.data[0][5];
 					
 					if (Number(w.dewpoint) > Number(w.air_temp)) {
 						w.dewpoint = w.air_temp;
@@ -247,6 +345,7 @@
 					$("span.wind_direction").text(APP.degreesToCompass(w.wind_direction));
 					$("span.wind_speed").text(w.wind_speed.toFixed(1));
 					$("span.dewpoint").text(w.dewpoint.toFixed(1));
+					$("span.pressure").text(w.pressure.toFixed(1));
 
 					var i = $("i.wind_direction");
 					i.removeClass();
@@ -288,7 +387,7 @@
 				window.open(
 					"http://nathanpetersenn.github.io/LiveMadisonWeather/#widget",
 					"Live Madison Weather",
-					"height=492,width=375,menubar=no,status=no,toolbar=no"
+					"height=460,width=350,menubar=no,status=no,toolbar=no"
 				);
 			});
 		</script>
