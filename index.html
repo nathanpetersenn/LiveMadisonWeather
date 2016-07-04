@@ -353,7 +353,7 @@
 					$("html").css("background-image", "url(" + this.src + ")");
 					
 					var dir = ["N", "E", "S", "W", "NW"][APP.currImageIndex];
-					$("span.camp-dir").text(dir);
+					$("span.cam-dir").text(dir);
 				
 					var inc = direction ? 1 : -1;
 					APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
