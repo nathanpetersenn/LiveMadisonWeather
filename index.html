@@ -349,7 +349,7 @@
 
 				var inc = direction ? 1 : -1;
 
-				APP.currImageIndex = (APP.currImageIndex + inc) % APP.imageURLs.length;	
+				APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 			};
 
 			APP.refreshWeather = function() {
@@ -434,6 +434,10 @@
 				clearInterval(APP.rotateBgImageInterval);
 				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
 			});
+			
+			function mod(n, m) {
+        			return ((n % m) + m) % m;
+			}
 		</script>
 	</body>
 </html>
