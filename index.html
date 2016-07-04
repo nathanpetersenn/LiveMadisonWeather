@@ -90,9 +90,15 @@
 				color: #fff;
 				text-decoration: none;
 				font-size: 1.5em;
+			}
+			
+			aside.left a {
 				margin-left: .5em;
 			}
 
+			aside.right a {
+				margin-right: .5em;
+			}
 
 			@media screen and (max-width:2400px) {
 				h3 { font-size: 5em; }
@@ -326,7 +332,7 @@
 				APP.refreshWeather();
 				APP.refreshTime();
 
-				setInterval(APP.rotateBgImage, 60000);
+				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
 				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 2500);
 				setInterval(APP.refreshTime, 1000);
 				
@@ -416,11 +422,17 @@
 			$("a.rotate-left").click(function(e) {
 				e.preventDefault();
 				APP.rotateBgImage(false);
+				
+				clearInterval(APP.rotateBgImageInterval);
+				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
 			});
 			
 			$("a.rotate-right").click(function(e) {
 				e.preventDefault();
 				APP.rotateBgImage();
+				
+				clearInterval(APP.rotateBgImageInterval);
+				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
 			});
 		</script>
 	</body>
