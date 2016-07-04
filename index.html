@@ -347,6 +347,9 @@
 			};
 
 			APP.rotateBgImage = function(direction = true) {
+				var inc = direction ? 1 : -1;
+				APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
+				
 				var image = new Image();
 				image.src = APP.imageURLs[APP.currImageIndex] + "?" + escape(new Date()); // force no caching from browser
 				image.onload = function() {
@@ -354,9 +357,6 @@
 					
 					var dir = ["N", "E", "S", "W", "NW"][APP.currImageIndex];
 					$("span.cam-dir").text(dir);
-				
-					var inc = direction ? 1 : -1;
-					APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 				};
 			};
 
