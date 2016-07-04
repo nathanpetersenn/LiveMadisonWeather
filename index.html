@@ -80,10 +80,12 @@
 			
 			aside.left {
 				left: 0;
+				margin-left: .5em;
 			}
 			
 			aside.right {
 				right: 0;
+				margin-right: .5em;
 			}
 
 			aside a {
@@ -92,16 +94,14 @@
 				font-size: 1.5em;
 			}
 			
-			aside.left a {
-				margin-left: .5em;
-			}
-
-			aside.right a {
-				margin-right: .5em;
-			}
-			
 			aside span.cam-dir {
 				width: 2em;
+				display: inline-block;
+				color: #fff;
+				font-weight: 700;
+				position: relative;
+				bottom: 2px;
+				text-align: center;
 			}
 
 			@media screen and (max-width:2400px) {
@@ -351,11 +351,13 @@
 				image.src = APP.imageURLs[APP.currImageIndex] + "?" + escape(new Date()); // force no caching from browser
 				image.onload = function() {
 					$("html").css("background-image", "url(" + this.src + ")");
+					
+					var dir = ["N", "E", "S", "W", "NW"][APP.currImageIndex];
+					$("span.camp-dir").text(dir);
+				
+					var inc = direction ? 1 : -1;
+					APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 				};
-
-				var inc = direction ? 1 : -1;
-
-				APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 			};
 
 			APP.refreshWeather = function() {
