@@ -76,7 +76,14 @@
 			aside {
 				position: fixed;
 				bottom: 0;
+			}
+			
+			aside.left {
 				left: 0;
+			}
+			
+			aside.right {
+				right: 0;
 			}
 
 			aside a {
@@ -276,13 +283,23 @@
 			</div>
 		</footer>
 
-		<aside>
+		<aside class="left">
 			<a href="#" class="widget">
 				<i class="fa fa-external-link"></i>
 			</a>
 
 			<a href="http://nathanpetersen.com/projects/live-madison-weather/" target="_blank">
 				<i class="fa fa-book"></i>
+			</a>
+		</aside>
+		
+		<aside class="right">
+			<a href="#" class="rotate-left">
+				<i class="fa fa-chevron-left"></i>
+			</a>
+
+			<a href="#" class="rotate-right">
+				<i class="fa fa-chevron-right"></i>
 			</a>
 		</aside>
 
@@ -317,14 +334,16 @@
 				// setInterval(function() { window.location.reload(); }, 60000); 
 			};
 
-			APP.rotateBgImage = function() {
+			APP.rotateBgImage = function(direction = true) {
 				var image = new Image();
 				image.src = APP.imageURLs[APP.currImageIndex] + "?" + escape(new Date()); // force no caching from browser
 				image.onload = function() {
 					$("html").css("background-image", "url(" + this.src + ")");
 				};
 
-				APP.currImageIndex = (APP.currImageIndex + 1) % APP.imageURLs.length;	
+				var inc = direction ? 1 : -1;
+
+				APP.currImageIndex = (APP.currImageIndex + inc) % APP.imageURLs.length;	
 			};
 
 			APP.refreshWeather = function() {
@@ -392,6 +411,16 @@
 					"Live Madison Weather",
 					"height=460,width=350,menubar=no,status=no,toolbar=no"
 				);
+			});
+			
+			$("a.rotate-left").click(function(e) {
+				e.preventDefault();
+				APP.rotateBgImage(false);
+			});
+			
+			$("a.rotate-right").click(function(e) {
+				e.preventDefault();
+				APP.rotateBgImage();
 			});
 		</script>
 	</body>
