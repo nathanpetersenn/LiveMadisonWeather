@@ -335,7 +335,7 @@
 					$("aside").hide();
 				}
 
-				APP.rotateBgImage();
+				APP.rotateBgImage(true);
 				APP.refreshWeather();
 				APP.refreshTime();
 
@@ -347,7 +347,7 @@
 				// setInterval(function() { window.location.reload(); }, 60000); 
 			};
 
-			APP.rotateBgImage = function(direction = true) {
+			APP.rotateBgImage = function(direction) {
 				var inc = direction ? 1 : -1;
 				APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 				
@@ -433,15 +433,15 @@
 				APP.rotateBgImage(false);
 				
 				clearInterval(APP.rotateBgImageInterval);
-				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
+				APP.rotateBgImageInterval = setInterval(function() { APP.rotateBgImage(true); },  60000);
 			});
 			
 			$("a.rotate-right").click(function(e) {
 				e.preventDefault();
-				APP.rotateBgImage();
+				APP.rotateBgImage(true);
 				
 				clearInterval(APP.rotateBgImageInterval);
-				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
+				APP.rotateBgImageInterval = setInterval(function() { APP.rotateBgImage(true); },  60000);
 			});
 			
 			function mod(n, m) {
