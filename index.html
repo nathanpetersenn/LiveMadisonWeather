@@ -10,6 +10,8 @@
 		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 		<script src="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.js"></script>
 		<script src="https://use.fontawesome.com/b7732d4d89.js"></script>
+		<script src="js/exif.js"></script>
+
 
 		<!-- CSS & Fonts -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.2.1/foundation.min.css">
@@ -97,7 +99,7 @@
 			}
 			
 			aside span.cam-dir {
-				width: 2em;
+				width: auto;
 				display: inline-block;
 				color: #fff;
 				font-weight: 700;
@@ -344,6 +346,23 @@
 				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
 				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 2500);
 				setInterval(APP.refreshTime, 1000);
+
+				$(document).keydown(function(e) {
+					if (e.keyCode == 37) {
+						// left
+						$("a.rotate-left").click();
+					}
+
+					if (e.keyCode == 39) {
+						// right
+						$("a.rotate-right").click();
+					}
+
+					if (e.keyCode == 38) {
+						// up
+						$("a.widget").click();
+					}
+				});
 				
 				// refresh page every 1 minute for testing
 				// setInterval(function() { window.location.reload(); }, 60000); 
@@ -354,8 +373,20 @@
 				APP.currImageIndex = mod(APP.currImageIndex + inc, APP.imageURLs.length);
 				
 				var image = new Image();
+				//image.setAttribute("crossOrigin", "anonymous");
 				image.src = APP.imageURLs[APP.currImageIndex] + "?" + escape(new Date()); // force no caching from browser
 				image.onload = function() {
+					//console.log(image);
+					// check to see if image is actually a live image
+					// var reader = new FileReader();
+					// reader.addEventListener("load", function() {
+					// 	console.log(reader.result);
+					// });
+					// reader.readAsDataURL(image.src);
+					//EXIF.getData(getBase64Image(image), function() {
+					//	console.log(EXIF.getTag(this, "Comments"));
+					//});
+
 					$("html").css("background-image", "url(" + this.src + ")");
 					
 					var dir = ["N", "E", "S", "W", "NW"][APP.currImageIndex];
@@ -448,6 +479,25 @@
 			
 			function mod(n, m) {
         			return ((n % m) + m) % m;
+			}
+
+			function getBase64Image(img) {
+				// Create an empty canvas element
+				var canvas = document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+
+				// Copy the image contents to the canvas
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(img, 0, 0);
+
+				// Get the data-URL formatted image
+				// Firefox supports PNG and JPEG. You could check img.src to
+				// guess the original format, but be aware the using "image/jpg"
+				// will re-encode the image.
+				var dataURL = canvas.toDataURL("image/jpeg");
+
+				return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
 			}
 		</script>
 	</body>
