@@ -45,11 +45,12 @@
 
 			h1 {
 				font-size: 7em;
+				margin: 0 0 -.3em 0;
 			}
 
 			h2 {
 				font-size: 3em;
-				margin: 0 0 -.5em 0;
+				margin: 0;
 			}
 
 			h3 {
@@ -65,6 +66,11 @@
 			h4 {
 				font-size: 2em;
 				margin-top: -1em;
+			}
+
+			h5 {
+				font-size: 2em;
+				margin: 0 0 -.5em 0;
 			}
 
 			footer {
@@ -129,6 +135,7 @@
 				h1 { font-size: 4em; }
 				h2 { font-size: 1.5em; }
 				h3 { font-size: 2.5em; }
+				h5 { font-size: 1.5em; }
 			}
 
 			@media screen and (max-width:1250px) {
@@ -285,15 +292,24 @@
 		<footer class="text-center">
 			<div class="row expanded">
 				<div class="small-12 columns">
-					<h2>Madison, WI</h2>
+					<h5>
+						<span class="month">January</span> <span class="day">1</span>, <span class="year">2000</span>
+					</h5>
 				</div>
 			</div>
+
 
 			<div class="row expanded">
 				<div class="small-12 columns">
 					<h1>
 						<span class="hours">00</span>:<span class="minutes">00</span>:<span class="seconds">00</span>
 					</h1>
+				</div>
+			</div>
+
+			<div class="row expanded">
+				<div class="small-12 columns">
+					<h2>Madison, WI</h2>
 				</div>
 			</div>
 		</footer>
@@ -358,10 +374,10 @@
 						$("a.rotate-right").click();
 					}
 
-					if (e.keyCode == 38) {
-						// up
-						$("a.widget").click();
-					}
+					// if (e.keyCode == 38) {
+					//	// up
+					//	$("a.widget").click();
+					// }
 				});
 				
 				// refresh page every 1 minute for testing
@@ -441,6 +457,18 @@
 				var s = d.getSeconds();
 				if (s < 10) s = "0" + s;
 				$("span.seconds").text(s);
+
+				var year = d.getFullYear();
+				$("span.year").text(year);
+
+				var months = ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				var month = d.getMonth();
+				$("span.month").text(months[month]);
+
+				var day = d.getDate();
+				$("span.day").text(day);
+
+
 			};
 
 			APP.degreesToCompass = function(degrees) {
@@ -455,7 +483,7 @@
 				e.preventDefault();
 
 				window.open(
-					"http://nathanpetersenn.github.io/LiveMadisonWeather/#widget",
+					"http://livemadisonweather.com/#widget",
 					"Live Madison Weather",
 					"height=470,width=400,menubar=no,status=no,toolbar=no"
 				);
