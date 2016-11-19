@@ -68,6 +68,13 @@
 				margin: 0 0 -.65em 0;
 			}
 
+			span.history {
+				position: relative;
+				top: -1.45em;
+				font-size: 140%;
+				white-space: nowrap;
+			}
+
 			footer {
 				position: fixed;
 				bottom: 0;
@@ -118,22 +125,27 @@
 				h1 { font-size: 5em; margin-bottom: -.05em; }
 				h3 { font-size: 4em; }
 				h4 { font-size: 1.5em; }
+				span.history { top: -1.2em ; font-size: 120%; }
 			}
 
 			@media screen and (max-width:1750px) {
 				h3 { font-size: 3em; }
 				h4 { font-size: 1em; }
+				span.history { top: -1.1em; }
 			}
 
 			@media screen and (max-width:1400px) {
 				h1 { font-size: 4em; margin-bottom: -.1em;}
 				h3 { font-size: 2.5em; }
 				h5 { font-size: 1.5em; }
+				span.history { top: -1.1em; font-size: 100%;}
 			}
 
 			@media screen and (max-width:1250px) {
 				h3 { font-size: 1.95em; }
 				h4 { font-size: .7em; }
+				span.history { font-size: 80%; }
+
 			}
 
 			/*** MEDIUM ***/
@@ -142,16 +154,19 @@
 				h1 { margin-bottom: 0; }
 				h3 { font-size: 4em; }
 				h4 { font-size: 1.5em; }
+				span.history { font-size: 100%; top: -1.5em; }
 			}
 
 			@media screen and (max-width:900px) {
 				h1 { margin-bottom: -.1em; }
 				h3 { font-size: 3em; }
 				h4 { font-size: 1em; }
+				span.history { top: -1.4em; }
 			}
 
 			@media screen and (max-width:700px) {
 				h3 { font-size: 2.5em; }
+				span.history { top: -1.2em; }
 			}
 
 			/*** SMALL ***/
@@ -159,6 +174,7 @@
 			@media screen and (max-width:640px) {
 				h3 { font-size: 3em; }
 				h4 { font-size: 1em; }
+				span.history { top: -1.05em; }
 			}
 
 			/*** SMALL HEIGHT ***/
@@ -200,6 +216,7 @@
 								<span class="air_temp">0</span>
 								<small>&deg;F</small>
 							</h3>
+							<span class="history temp">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -215,6 +232,7 @@
 								<span class="dewpoint">0</span>
 								<small>&deg;F</small>
 							</h3>
+							<span class="history dewpoint">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -230,6 +248,7 @@
 								<span class="relative_humidity">0</span>
 								<small>%</small>
 							</h3>
+							<span class="history humidity">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -245,6 +264,7 @@
 								<span class="wind_speed">0</span>
 								<small> mph</small>
 							</h3>
+							<span class="history windspeed">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -259,6 +279,7 @@
 							<h3>
 								<span class="wind_direction">N</span>
 							</h3>
+							<span class="history winddir">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -274,6 +295,7 @@
 								<span class="pressure">0</span>
 								<small> hPa</small>
 							</h3>
+							<span class="history pressure">&nbsp;</span>
 						</div>
 
 						<div class="small-12 columns">
@@ -400,36 +422,102 @@
 			};
 
 			APP.refreshWeather = function() {
-				$.getJSON("http://metobs.ssec.wisc.edu/app/rig/tower/data/jsonp?symbols=t:rh:dir:spd:td:p&callback=?", function(json) {
-					var w = {};
-					w.timestamp = json.stamps[0];
+				$.getJSON("http://metobs.ssec.wisc.edu/app/rig/tower/data/jsonp?symbols=t:rh:dir:spd:td:p&callback=?&begin=-01:00:00", function(json) {
+					var latestData = json.data[json.data.length - 1];
+					APP._refreshLiveWeather(latestData);
 
-					w.air_temp = json.data[0][0] * (9/5) + 32;
-					w.relative_humidity = json.data[0][1];
-					w.wind_direction = json.data[0][2];
-					w.wind_speed = json.data[0][3] / 0.44704; // m/s to mph
-					w.dewpoint = json.data[0][4] * (9/5) + 32;
-					w.pressure = json.data[0][5];
-					
-					if (Number(w.dewpoint) > Number(w.air_temp)) {
-						w.dewpoint = w.air_temp;
+					// calcuate temp delta for last hour
+					var temp_delta = (((json.data[json.data.length - 1][0] + json.data[json.data.length - 2][0]) / 2) * (9/5) + 32)
+								- (((json.data[0][0] + json.data[1][0]) / 2) * (9/5) + 32);
+					temp_delta = temp_delta.toFixed(1);
+					var dir = $("<i/>").addClass("fa");
+					if (temp_delta >= 0) { dir.addClass("fa-arrow-up"); }
+					if (temp_delta < 0) { dir.addClass("fa-arrow-down"); }
+					$("span.history.temp").html(dir);
+					$("span.history.temp").append(" " + temp_delta + " &deg;F / hr");
+
+
+					// calcuate dew point delta for last hour
+					var dp_delta = (((json.data[json.data.length - 1][4] + json.data[json.data.length - 2][4]) / 2) * (9/5) + 32)
+								- (((json.data[0][4] + json.data[1][4]) / 2) * (9/5) + 32);
+					dp_delta = dp_delta.toFixed(1);
+					var dp_dir = $("<i/>").addClass("fa");
+					if (dp_delta >= 0) { dp_dir.addClass("fa-arrow-up"); }
+					if (dp_delta < 0) { dp_dir.addClass("fa-arrow-down"); }
+					$("span.history.dewpoint").html(dp_dir);
+					$("span.history.dewpoint").append(" " + dp_delta + " &deg;F / hr");
+
+					// calcuate humidity delta for last hour
+					var h_delta = ((json.data[json.data.length - 1][1] + json.data[json.data.length - 2][1]) / 2)
+								- ((json.data[0][1] + json.data[1][1]) / 2);
+					h_delta = h_delta.toFixed(0);
+					var h_dir = $("<i/>").addClass("fa");
+					if (h_delta >= 0) { h_dir.addClass("fa-arrow-up"); }
+					if (h_delta < 0) { h_dir.addClass("fa-arrow-down"); }
+					$("span.history.humidity").html(h_dir);
+					$("span.history.humidity").append(" " + h_delta + "% / hr");
+
+					// calcuate pressure delta for last hour
+					var p_delta = ((json.data[json.data.length - 1][5] + json.data[json.data.length - 2][5]) / 2)
+								- ((json.data[0][5] + json.data[1][5]) / 2);
+					p_delta = p_delta.toFixed(1);
+					var p_dir = $("<i/>").addClass("fa");
+					if (p_delta >= 0) { p_dir.addClass("fa-arrow-up"); }
+					if (p_delta < 0) { p_dir.addClass("fa-arrow-down"); }
+					$("span.history.pressure").html(p_dir);
+					$("span.history.pressure").append(" " + p_delta + " hPa / hr");
+
+
+					// calculate wind for last hour
+					var sum = 0;
+					var max = 0;
+					var dir_sum = 0;
+					for (var i = 0; i < json.data.length; i++) {
+						var speed = (json.data[i][3] / 0.44704); // m/s to mph
+						sum += speed;
+						dir_sum += json.data[i][2];
+						if (speed > max) {
+							max = speed;
+						}
 					}
-
-					$("span.air_temp").text(w.air_temp.toFixed(1));
-					$("span.relative_humidity").text(w.relative_humidity.toFixed(0));
-					$("span.wind_direction").text(APP.degreesToCompass(w.wind_direction));
-					$("span.wind_speed").text(w.wind_speed.toFixed(1));
-					$("span.dewpoint").text(w.dewpoint.toFixed(1));
-					$("span.pressure").text(w.pressure.toFixed(1));
-
-					var i = $("i.wind_direction");
-					i.removeClass();
-					i.addClass("wind_direction");
-					i.addClass("wi");
-					i.addClass("wi-wind");
-					i.addClass("from-" + w.wind_direction + "-deg");
+					var avg = sum / json.data.length;
+					var dir_avg = dir_sum / json.data.length;
+					var i_wind_dir = $("<i/>").addClass("wi").addClass("wi-wind");
+					i_wind_dir.addClass("from-" + dir_avg.toFixed(0) + "-deg");
+					$("span.history.windspeed").text(" " + avg.toFixed(1) + ", ")
+									.append(max.toFixed(1) + " mph / hr");
+					$("span.history.winddir").html(i_wind_dir).append(" " + APP.degreesToCompass(dir_avg) + " / hr");
 				});
 			};
+
+			APP._refreshLiveWeather = function(data) {
+				var w = {};
+				w.air_temp = data[0] * (9/5) + 32;
+				w.relative_humidity = data[1];
+				w.wind_direction = data[2];
+				w.wind_speed = data[3] / 0.44704; // m/s to mph
+				w.dewpoint = data[4] * (9/5) + 32;
+				w.pressure = data[5];
+					
+				if (Number(w.dewpoint) > Number(w.air_temp)) {
+					w.dewpoint = w.air_temp;
+				}
+
+				$("span.air_temp").text(w.air_temp.toFixed(1));
+				$("span.relative_humidity").text(w.relative_humidity.toFixed(0));
+				$("span.wind_direction").text(APP.degreesToCompass(w.wind_direction));
+				$("span.wind_speed").text(w.wind_speed.toFixed(1));
+				$("span.dewpoint").text(w.dewpoint.toFixed(1));
+				$("span.pressure").text(w.pressure.toFixed(1));
+
+				var i = $("i.wind_direction");
+				i.removeClass();
+				i.addClass("wind_direction");
+				i.addClass("wi");
+				i.addClass("wi-wind");
+				i.addClass("from-" + w.wind_direction + "-deg");
+			};
+
 
 			APP.refreshTime = function() {
 				var d = new Date();
