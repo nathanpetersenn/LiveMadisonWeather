@@ -236,7 +236,8 @@
 						</div>
 
 						<div class="small-12 columns">
-							<h4><i class="wi wi-thermometer-exterior"></i> <span class="desc">Dewpoint</span></h4>
+							<!-- <h4><i class="wi wi-thermometer-exterior"></i> <span class="desc">Dewpoint</span></h4> -->
+							<h4><i class="wi wi-thermometer-exterior"></i> <span class="desc">Feels Like</span></h4>
 						</div>
 					</div>
 				</div>
@@ -484,9 +485,30 @@
 					var dir_avg = dir_sum / json.data.length;
 					var i_wind_dir = $("<i/>").addClass("wi").addClass("wi-wind");
 					i_wind_dir.addClass("from-" + dir_avg.toFixed(0) + "-deg");
-					$("span.history.windspeed").text(" " + avg.toFixed(1) + ", ")
+					$("span.history.windspeed").html(" <b>" + avg.toFixed(1) + "</b>, ")
 									.append(max.toFixed(1) + " mph / hr");
 					$("span.history.winddir").html(i_wind_dir).append(" " + APP.degreesToCompass(dir_avg) + " / hr");
+
+
+					// calculate "feels like" for last hour from wind
+					var curr_wind = latestData[3] / 0.44704; // m/s to mph
+					var max_wind = max;
+					var avg_wind = avg;
+
+					var chill = function(T, W) {
+						return 35.74 + (0.6215 * T) - (35.75 * Math.pow(W, 0.16)) + (0.4275 * T * Math.pow(W, 0.16));
+					};
+
+					var temp = latestData[0] * (9/5) + 32;
+					var curr_chill = chill(temp, curr_wind);
+					var max_chill = chill(temp, max_wind);
+					var avg_chill = chill(temp, avg_wind);
+
+
+					$("span.dewpoint").text(curr_chill.toFixed(1));
+					$("span.history.dewpoint").html("<b>" + avg_chill.toFixed(1) + "</b>, ")
+									.append(max_chill.toFixed(1) + " &deg;F / hr");
+	
 				});
 			};
 
