@@ -499,15 +499,46 @@
 						return 35.74 + (0.6215 * T) - (35.75 * Math.pow(W, 0.16)) + (0.4275 * T * Math.pow(W, 0.16));
 					};
 
+					var heat = function(T, RH) {
+						var HI = 0.5 * (T + 61.0 + ((T - 68) * 1.2) + (RH * 0.094));
+						HI = (HI + T) / 2;
+
+						if (HI >= 80) {
+							HI = -42.379 + 2.04901523*T + 10.14333127*RH - .22475541*T*RH - .00683783*T*T - .05481717*RH*RH + .00122874*T*T*RH + .00085282*T*RH*RH - .00000199*T*T*RH*RH;
+	
+							if (RH < 13 && 80 < T && T < 112) {
+								HI -= ((13 - RH) / 4) * Math.sqrt(((17 - Math.abs(T - 95)) / 17));
+							}
+	
+							if (RH > 85 && 80 <= T && T <= 87) {
+								HI += ((RH - 85) / 10) * ((87 - T) / 5);
+							}
+						}
+
+						return HI;
+
+					};
+
 					var temp = latestData[0] * (9/5) + 32;
-					var curr_chill = chill(temp, curr_wind);
-					var max_chill = chill(temp, max_wind);
-					var avg_chill = chill(temp, avg_wind);
+					var humidity = latestData[1];
 
+					var curr_feel = temp;
+					var max_feel = temp;
+					var avg_feel = temp;
 
-					$("span.dewpoint").text(curr_chill.toFixed(1));
-					$("span.history.dewpoint").html("<b>" + avg_chill.toFixed(1) + "</b>, ")
-									.append(max_chill.toFixed(1) + " &deg;F / hr");
+					if (temp >= 80) {
+						curr_feel = heat(temp, humidity);
+						max_feel = heat(temp, humidity);
+						avg_feel = heat(temp, humidity);
+					} else if (temp <= 50) {
+						curr_feel = chill(temp, curr_wind);
+						max_feel = chill(temp, max_wind);
+						avg_feel = chill(temp, avg_wind);
+					}
+
+					$("span.dewpoint").text(curr_feel.toFixed(1));
+					$("span.history.dewpoint").html("<b>" + avg_feel.toFixed(1) + "</b>, ")
+									.append(max_feel.toFixed(1) + " &deg;F / hr");
 	
 				});
 			};
