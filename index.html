@@ -372,7 +372,7 @@
 				APP.refreshTime();
 
 				APP.rotateBgImageInterval = setInterval(APP.rotateBgImage, 60000);
-				setTimeout(function() {setInterval(APP.refreshWeather, 10000)}, 2500);
+				setTimeout(function() {setInterval(APP.refreshWeather, 60000)}, 2500);
 				setInterval(APP.refreshTime, 1000);
 
 				$(document).keydown(function(e) {
